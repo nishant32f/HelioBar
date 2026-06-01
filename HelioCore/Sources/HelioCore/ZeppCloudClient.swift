@@ -125,21 +125,52 @@ public struct ZeppCloudClient: Sendable {
         return nil
     }
 
-    /// stressInfo is a protobuf-ish stream of `0x0d <float32-LE>` repeated.
-    /// Best-effort: return the last value in (0,100]. MAY need calibration.
+    /// `stressInfo` is a protobuf message. The current/displayed stress score is
+    /// top-level **field 13** (float32), with field 11 as a fallback (daily avg).
+    /// Reverse-engineered from the live payload (field 13 == 44.68 ⇒ app shows 45).
     static func latestStressValue(_ blob: Data) -> Int? {
-        var vals: [Float] = []
-        var i = blob.startIndex
-        while i < blob.endIndex {
-            if blob[i] == 0x0d, blob.index(i, offsetBy: 5, limitedBy: blob.endIndex) != nil {
-                let f = blob.subdata(in: blob.index(after: i)..<blob.index(i, offsetBy: 5))
-                    .withUnsafeBytes { $0.loadUnaligned(as: Float32.self) }
-                vals.append(f)
-                i = blob.index(i, offsetBy: 5)
-            } else { i = blob.index(after: i) }
+        let b = [UInt8](blob)
+        var i = 0
+        var fields: [Int: Float] = [:]
+        func varint() -> UInt64? {
+            var r: UInt64 = 0, shift: UInt64 = 0
+            while i < b.count {
+                let x = b[i]; i += 1
+                r |= UInt64(x & 0x7f) << shift
+                if x & 0x80 == 0 { return r }
+                shift += 7
+                if shift > 63 { return nil }
+            }
+            return nil
         }
-        guard let last = vals.last(where: { $0 > 0 && $0 <= 100 }) else { return nil }
-        return Int(last.rounded())
+        while i < b.count {
+            guard let tag = varint() else { break }
+            let field = Int(tag >> 3), wire = Int(tag & 7)
+            switch wire {
+            case 0:                                   // varint
+                if varint() == nil { return resolveStress(fields) }
+            case 5:                                   // 32-bit (float)
+                guard i + 4 <= b.count else { return resolveStress(fields) }
+                fields[field] = Data(b[i..<i+4]).withUnsafeBytes { $0.loadUnaligned(as: Float32.self) }
+                i += 4
+            case 1:                                   // 64-bit
+                guard i + 8 <= b.count else { return resolveStress(fields) }
+                i += 8
+            case 2:                                   // length-delimited (skip)
+                guard let len = varint(), i + Int(len) <= b.count else { return resolveStress(fields) }
+                i += Int(len)
+            default:
+                return resolveStress(fields)
+            }
+        }
+        return resolveStress(fields)
+    }
+
+    private static func resolveStress(_ fields: [Int: Float]) -> Int? {
+        for f in [13, 11] {
+            if let v = fields[f], v > 0, v <= 100 { return Int(v.rounded()) }
+        }
+        return nil
     }
 
     static func stressLabel(_ score: Int) -> String {

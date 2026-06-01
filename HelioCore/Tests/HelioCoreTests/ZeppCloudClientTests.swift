@@ -15,9 +15,9 @@ private struct RoutingHTTP: HTTPFetching {
     }
 }
 
-/// Builds a stressInfo blob containing a single IEEE 754 LE float preceded by 0x0d.
-private func makeStressBlob(_ value: Float32) -> Data {
-    var d = Data([0x0d])
+/// Builds a protobuf blob with one float32 field (default field 13 = current stress).
+private func makeStressBlob(_ value: Float32, field: Int = 13) -> Data {
+    var d = Data([UInt8((field << 3) | 5)])   // tag: field number + wire type 5
     withUnsafeBytes(of: value.bitPattern.littleEndian) { d.append(contentsOf: $0) }
     return d
 }
@@ -127,19 +127,19 @@ final class ZeppCloudClientTests: XCTestCase {
 
     // MARK: - latestStressValue unit tests
 
-    func test_latestStressValue_parsesLastValidFloat() {
-        // Two floats: 25.0 and 65.0 — should pick 65.0 (last valid ≤100)
-        var d = Data([0x0d])
-        withUnsafeBytes(of: Float32(25.0).bitPattern.littleEndian) { d.append(contentsOf: $0) }
-        d.append(0x0d)
-        withUnsafeBytes(of: Float32(65.0).bitPattern.littleEndian) { d.append(contentsOf: $0) }
+    func test_latestStressValue_prefersField13OverField11() {
+        // field 11 (fallback) = 40, field 13 (current) = 65 -> picks 65
+        var d = makeStressBlob(40, field: 11)
+        d.append(makeStressBlob(65, field: 13))
         XCTAssertEqual(ZeppCloudClient.latestStressValue(d), 65)
     }
 
+    func test_latestStressValue_fallsBackToField11() {
+        XCTAssertEqual(ZeppCloudClient.latestStressValue(makeStressBlob(33, field: 11)), 33)
+    }
+
     func test_latestStressValue_ignoresValuesOver100() {
-        var d = Data([0x0d])
-        withUnsafeBytes(of: Float32(120.0).bitPattern.littleEndian) { d.append(contentsOf: $0) }
-        XCTAssertNil(ZeppCloudClient.latestStressValue(d))
+        XCTAssertNil(ZeppCloudClient.latestStressValue(makeStressBlob(120, field: 13)))
     }
 
     func test_latestStressValue_returnsNilOnEmptyBlob() {
