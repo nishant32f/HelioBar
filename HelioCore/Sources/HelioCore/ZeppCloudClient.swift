@@ -18,6 +18,7 @@ public struct ZeppCredentials: Sendable, Equatable {
 public enum ZeppCloudError: Error, Equatable {
     case http(Int)
     case decoding
+    case invalidHost
 }
 
 public struct ZeppMetrics: Equatable, Sendable {
@@ -35,7 +36,7 @@ public struct ZeppCloudClient: Sendable {
     }
 
     public func fetchMetrics() async throws -> ZeppMetrics {
-        let (data, resp) = try await http.data(for: Self.makeRequest(creds: creds))
+        let (data, resp) = try await http.data(for: try Self.makeRequest(creds: creds))
         if let http = resp as? HTTPURLResponse,
            !(200..<300).contains(http.statusCode) {
             throw ZeppCloudError.http(http.statusCode)
@@ -44,12 +45,13 @@ public struct ZeppCloudClient: Sendable {
     }
 
     /// NOTE: calibrate path/query against your own HAR capture.
-    static func makeRequest(creds: ZeppCredentials) -> URLRequest {
+    static func makeRequest(creds: ZeppCredentials) throws -> URLRequest {
         var comps = URLComponents()
         comps.scheme = "https"
         comps.host = creds.host
         comps.path = "/users/me/health/summary"   // placeholder — adjust to real capture
-        var req = URLRequest(url: comps.url!)
+        guard let url = comps.url else { throw ZeppCloudError.invalidHost }
+        var req = URLRequest(url: url)
         req.setValue(creds.appToken, forHTTPHeaderField: "apptoken")
         return req
     }

@@ -58,9 +58,16 @@ final class ZeppCloudClientTests: XCTestCase {
         }
     }
 
-    func test_requestCarriesAppTokenHeader() {
-        let req = ZeppCloudClient.makeRequest(creds: creds)
+    func test_requestCarriesAppTokenHeader() throws {
+        let req = try ZeppCloudClient.makeRequest(creds: creds)
         XCTAssertEqual(req.value(forHTTPHeaderField: "apptoken"), "tok")
         XCTAssertEqual(req.url?.host, "api.example.com")
+    }
+
+    func test_makeRequestThrowsOnInvalidHost() {
+        let bad = ZeppCredentials(appToken: "t", host: "not a host")
+        XCTAssertThrowsError(try ZeppCloudClient.makeRequest(creds: bad)) {
+            XCTAssertEqual($0 as? ZeppCloudError, .invalidHost)
+        }
     }
 }

@@ -13,6 +13,7 @@ struct HelioBarApp: App {
             .task { model.start() }
         } label: {
             Label(barTitle, systemImage: "heart.fill")
+                .foregroundStyle(zoneColor)
         }
         .menuBarExtraStyle(.window)
 
@@ -24,5 +25,13 @@ struct HelioBarApp: App {
 
     private var barTitle: String {
         model.store.liveHR.map { "\($0)" } ?? "–"
+    }
+
+    private var zoneColor: Color {
+        switch model.store.hrZone {
+        case .elevated: return .orange
+        case .high:     return .red
+        default:        return .primary
+        }
     }
 }

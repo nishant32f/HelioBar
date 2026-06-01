@@ -11,8 +11,11 @@ final class AppModel {
 
     private var monitor: HeartRateMonitor?
     private var pollTask: Task<Void, Never>?
+    private var started = false
 
     func start() {
+        guard !started else { return }
+        started = true
         startBLE()
         startCloudPolling()
     }
@@ -26,6 +29,9 @@ final class AppModel {
                 Task { @MainActor in
                     if !connected { self?.store.hrDisconnected() }
                 }
+            },
+            onUnavailable: { [weak self] message in
+                Task { @MainActor in self?.store.hrFailed(message) }
             })
     }
 

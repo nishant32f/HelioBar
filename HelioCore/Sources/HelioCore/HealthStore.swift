@@ -32,6 +32,10 @@ public final class HealthStore {
         self.cloudStatus = .live
     }
 
+    public func hrFailed(_ message: String) {
+        hrStatus = .error(message)
+    }
+
     public func cloudFailed(_ message: String) {
         cloudStatus = .error(message)
     }

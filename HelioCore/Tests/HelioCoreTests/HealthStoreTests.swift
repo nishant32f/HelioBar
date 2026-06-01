@@ -46,4 +46,14 @@ final class HealthStoreTests: XCTestCase {
         XCTAssertEqual(store.hrStatus, .live)
         XCTAssertEqual(store.cloudStatus, .error("401"))
     }
+
+    func test_hrFailedSetsErrorAndLeavesCloud() {
+        let store = HealthStore()
+        store.updateCloud(stress: StressReading(value: 20, label: "Calm"),
+                          readiness: ReadinessReading(value: 70),
+                          at: Date(timeIntervalSince1970: 1))
+        store.hrFailed("Bluetooth is off")
+        XCTAssertEqual(store.hrStatus, .error("Bluetooth is off"))
+        XCTAssertEqual(store.cloudStatus, .live)   // cloud untouched
+    }
 }

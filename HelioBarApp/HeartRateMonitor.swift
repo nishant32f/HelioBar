@@ -6,23 +6,35 @@ import HelioCore
 final class HeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     private var central: CBCentralManager!
     private var peripheral: CBPeripheral?
-    private let onBPM: (Int) -> Void
-    private let onConnected: (Bool) -> Void
+    private let onBPM: @Sendable (Int) -> Void
+    private let onConnected: @Sendable (Bool) -> Void
+    private let onUnavailable: @Sendable (String) -> Void
 
     private let hrService = CBUUID(string: "180D")
     private let hrMeasurement = CBUUID(string: "2A37")
 
-    init(onBPM: @escaping (Int) -> Void,
-         onConnected: @escaping (Bool) -> Void) {
+    init(onBPM: @escaping @Sendable (Int) -> Void,
+         onConnected: @escaping @Sendable (Bool) -> Void,
+         onUnavailable: @escaping @Sendable (String) -> Void) {
         self.onBPM = onBPM
         self.onConnected = onConnected
+        self.onUnavailable = onUnavailable
         super.init()
         central = CBCentralManager(delegate: self, queue: nil)
     }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state == .poweredOn {
+        switch central.state {
+        case .poweredOn:
             central.scanForPeripherals(withServices: [hrService])
+        case .unauthorized:
+            onUnavailable("Bluetooth permission denied")
+        case .poweredOff:
+            onUnavailable("Bluetooth is off")
+        case .unsupported:
+            onUnavailable("Bluetooth unavailable")
+        default:
+            break
         }
     }
 
@@ -39,6 +51,13 @@ final class HeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripheralDe
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         onConnected(true)
         peripheral.discoverServices([hrService])
+    }
+
+    func centralManager(_ central: CBCentralManager,
+                        didFailToConnect peripheral: CBPeripheral,
+                        error: Error?) {
+        onConnected(false)
+        central.scanForPeripherals(withServices: [hrService])
     }
 
     func centralManager(_ central: CBCentralManager,
