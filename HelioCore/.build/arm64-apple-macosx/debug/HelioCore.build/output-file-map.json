@@ -23,6 +23,13 @@
     "swift-dependencies": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/Models.swiftdeps",
     "diagnostics": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/Models.dia"
   },
+  "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/TokenStoring.swift": {
+    "dependencies": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/TokenStoring.d",
+    "object": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/TokenStoring.swift.o",
+    "swiftmodule": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/TokenStoring~partial.swiftmodule",
+    "swift-dependencies": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/TokenStoring.swiftdeps",
+    "diagnostics": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/TokenStoring.dia"
+  },
   "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/ZeppCloudClient.swift": {
     "dependencies": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/ZeppCloudClient.d",
     "object": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/ZeppCloudClient.swift.o",

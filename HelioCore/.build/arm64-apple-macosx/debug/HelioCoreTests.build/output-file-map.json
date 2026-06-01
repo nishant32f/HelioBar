@@ -16,6 +16,13 @@
     "swift-dependencies": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/HeartRatePacketTests.swiftdeps",
     "diagnostics": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/HeartRatePacketTests.dia"
   },
+  "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/TokenStoringTests.swift": {
+    "dependencies": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/TokenStoringTests.d",
+    "object": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/TokenStoringTests.swift.o",
+    "swiftmodule": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/TokenStoringTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/TokenStoringTests.swiftdeps",
+    "diagnostics": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/TokenStoringTests.dia"
+  },
   "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/ZeppCloudClientTests.swift": {
     "dependencies": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/ZeppCloudClientTests.d",
     "object": "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/ZeppCloudClientTests.swift.o",
