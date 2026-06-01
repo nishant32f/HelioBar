@@ -14,10 +14,7 @@ final class AppModel {
         started = true
         monitor = HeartRateMonitor(
             onSample: { [weak self] sample in
-                Task { @MainActor in
-                    self?.store.updateHR(sample.bpm)
-                    self?.store.recordRR(sample.rrIntervals.count)
-                }
+                Task { @MainActor in self?.store.updateHR(sample.bpm) }
             },
             onConnected: { [weak self] connected in
                 Task { @MainActor in if !connected { self?.store.hrDisconnected() } }

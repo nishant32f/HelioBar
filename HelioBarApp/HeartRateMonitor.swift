@@ -87,8 +87,6 @@ final class HeartRateMonitor: NSObject, CBCentralManagerDelegate, CBPeripheralDe
                     error: Error?) {
         guard let data = characteristic.value,
               let sample = HeartRatePacket.parse(data) else { return }
-        let hex = data.map { String(format: "%02x", $0) }.joined()
-        NSLog("HELIO_HR raw=%@ bpm=%d rrCount=%d", hex, sample.bpm, sample.rrIntervals.count)
         onSample(sample)
     }
 }
