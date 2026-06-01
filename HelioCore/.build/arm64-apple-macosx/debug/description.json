@@ -24,7 +24,7 @@
       "inputs" : [
         {
           "kind" : "file",
-          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Placeholder.swift"
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Models.swift"
         },
         {
           "kind" : "file",
@@ -39,7 +39,7 @@
       "moduleName" : "HelioCore",
       "moduleOutputPath" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/Modules/HelioCore.swiftmodule",
       "objects" : [
-        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/Placeholder.swift.o"
+        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/Models.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -94,7 +94,7 @@
       "outputs" : [
         {
           "kind" : "file",
-          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/Placeholder.swift.o"
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/Models.swift.o"
         },
         {
           "kind" : "file",
@@ -103,7 +103,7 @@
       ],
       "prepareForIndexing" : false,
       "sources" : [
-        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Placeholder.swift"
+        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Models.swift"
       ],
       "tempsPath" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build",
       "wholeModuleOptimization" : false
@@ -120,7 +120,7 @@
       "-package-name",
       "heliocore",
       "-c",
-      "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Placeholder.swift",
+      "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Models.swift",
       "-I",
       "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/Modules",
       "-target",
@@ -200,7 +200,7 @@
         },
         {
           "kind" : "file",
-          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Placeholder.swift"
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Models.swift"
         }
       ],
       "outputFilePath" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/sources"
