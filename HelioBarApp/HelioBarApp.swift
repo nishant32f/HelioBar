@@ -7,11 +7,11 @@ struct HelioBarApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            MenuContentView(store: model.store) {
-                openWindow(id: "settings")
-                NSApplication.shared.activate(ignoringOtherApps: true)
-            }
-            .task { model.start() }
+            MenuContentView(
+                store: model.store,
+                onSettings: { openWindow(id: "settings"); activate() },
+                onBreathe:  { openWindow(id: "breathing"); activate() })
+                .task { model.start() }
         } label: {
             Text(barTitle).foregroundStyle(zoneColor)
         }
@@ -21,7 +21,14 @@ struct HelioBarApp: App {
             SettingsView()
         }
         .windowResizability(.contentSize)
+
+        Window("Breathe", id: "breathing") {
+            BreathingView(store: model.store)
+        }
+        .windowResizability(.contentSize)
     }
+
+    private func activate() { NSApplication.shared.activate(ignoringOtherApps: true) }
 
     private var barTitle: String {
         guard let hr = model.store.liveHR else { return "–" }

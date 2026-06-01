@@ -4,6 +4,7 @@ import HelioCore
 struct MenuContentView: View {
     let store: HealthStore
     var onSettings: () -> Void
+    var onBreathe: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -16,15 +17,18 @@ struct MenuContentView: View {
             footer
         }
         .padding(12)
-        .frame(width: 240)
+        .frame(width: 264)
     }
 
     private var hrRow: some View {
-        HStack {
+        HStack(spacing: 6) {
             Image(systemName: "heart.fill").foregroundStyle(.red)
             Text(store.liveHR.map { "\($0) bpm" } ?? "—")
                 .font(.title3).bold()
                 .opacity(store.hrStatus == .stale ? 0.5 : 1)
+            if let p = store.percentMax {
+                Text("\(p)%").font(.caption).foregroundStyle(.secondary)
+            }
             if let t = store.hrTrend { trendIcon(t) }
             Spacer()
             badge
@@ -88,12 +92,14 @@ struct MenuContentView: View {
     }
 
     private var footer: some View {
-        HStack {
+        HStack(spacing: 8) {
             Button("Reset") { store.resetSession() }
+            Button("Breathe", action: onBreathe)
             Spacer()
-            Button("Settings…", action: onSettings)
+            Button("Settings", action: onSettings)
             Button("Quit") { NSApplication.shared.terminate(nil) }
         }
+        .controlSize(.small)
     }
 }
 
@@ -125,9 +131,9 @@ private struct Sparkline: View {
 #Preview("live") {
     let s = HealthStore()
     [62,65,70,68,72,80,95,110,90,75,72,71].forEach { s.updateHR($0) }
-    return MenuContentView(store: s, onSettings: {})
+    return MenuContentView(store: s, onSettings: {}, onBreathe: {})
 }
 
 #Preview("idle") {
-    MenuContentView(store: HealthStore(), onSettings: {})
+    MenuContentView(store: HealthStore(), onSettings: {}, onBreathe: {})
 }
