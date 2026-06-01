@@ -1,36 +1,44 @@
 import SwiftUI
 import HelioCore
 
-/// Guided breathing with live HR biofeedback — watch your HR settle as you slow down.
+/// Guided breathing with live HR biofeedback — shown inline in the dropdown.
 struct BreathingView: View {
     let store: HealthStore
+    var onClose: () -> Void
+
     @State private var inhaling = false
     @State private var startHR: Int?
     @State private var lowHR: Int?
     private let timer = Timer.publish(every: 4, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: 12) {
+            HStack {
+                Text("Breathe").font(.headline)
+                Spacer()
+                Button("Done", action: onClose).controlSize(.small)
+            }
+
             Text(inhaling ? "Inhale…" : "Exhale…")
-                .font(.headline).foregroundStyle(.secondary)
+                .font(.subheadline).foregroundStyle(.secondary)
+
             ZStack {
                 Circle().fill(.blue.opacity(0.15))
                 Circle().stroke(.blue, lineWidth: 2)
             }
-            .frame(width: inhaling ? 180 : 90, height: inhaling ? 180 : 90)
+            .frame(width: inhaling ? 150 : 80, height: inhaling ? 150 : 80)
             .animation(.easeInOut(duration: 4), value: inhaling)
+            .frame(height: 160)   // reserve space so the popover doesn't jump
 
             VStack(spacing: 2) {
                 Text(store.liveHR.map { "\($0) bpm" } ?? "—")
-                    .font(.system(size: 28, weight: .bold)).monospacedDigit()
+                    .font(.system(size: 26, weight: .bold)).monospacedDigit()
                 if let s = startHR, let l = lowHR {
                     Text("start \(s) · low \(l) · ↓\(Swift.max(0, s - l))")
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
         }
-        .frame(width: 260, height: 330)
-        .padding()
         .onAppear { startHR = store.liveHR; lowHR = store.liveHR; inhaling = true }
         .onReceive(timer) { _ in inhaling.toggle() }
         .onChange(of: store.liveHR) { _, hr in

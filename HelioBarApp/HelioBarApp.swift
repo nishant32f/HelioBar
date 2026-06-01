@@ -9,8 +9,7 @@ struct HelioBarApp: App {
         MenuBarExtra {
             MenuContentView(
                 store: model.store,
-                onSettings: { openWindow(id: "settings"); activate() },
-                onBreathe:  { openWindow(id: "breathing"); activate() })
+                onSettings: { openWindow(id: "settings"); activate() })
                 .task { model.start() }
         } label: {
             Text(barTitle).foregroundStyle(zoneColor)
@@ -19,11 +18,6 @@ struct HelioBarApp: App {
 
         Window("HelioBar Settings", id: "settings") {
             SettingsView()
-        }
-        .windowResizability(.contentSize)
-
-        Window("Breathe", id: "breathing") {
-            BreathingView(store: model.store)
         }
         .windowResizability(.contentSize)
     }

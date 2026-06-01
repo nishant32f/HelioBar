@@ -4,17 +4,21 @@ import HelioCore
 struct MenuContentView: View {
     let store: HealthStore
     var onSettings: () -> Void
-    var onBreathe: () -> Void
+    @State private var breathing = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            hrRow
-            Sparkline(values: store.recent)
-                .frame(height: 38)
-            statsRow
-            zoneBar
-            Divider()
-            footer
+            if breathing {
+                BreathingView(store: store) { breathing = false }
+            } else {
+                hrRow
+                Sparkline(values: store.recent)
+                    .frame(height: 38)
+                statsRow
+                zoneBar
+                Divider()
+                footer
+            }
         }
         .padding(12)
         .frame(width: 264)
@@ -94,7 +98,7 @@ struct MenuContentView: View {
     private var footer: some View {
         HStack(spacing: 8) {
             Button("Reset") { store.resetSession() }
-            Button("Breathe", action: onBreathe)
+            Button("Breathe") { breathing = true }
             Spacer()
             Button("Settings", action: onSettings)
             Button("Quit") { NSApplication.shared.terminate(nil) }
@@ -131,9 +135,9 @@ private struct Sparkline: View {
 #Preview("live") {
     let s = HealthStore()
     [62,65,70,68,72,80,95,110,90,75,72,71].forEach { s.updateHR($0) }
-    return MenuContentView(store: s, onSettings: {}, onBreathe: {})
+    return MenuContentView(store: s, onSettings: {})
 }
 
 #Preview("idle") {
-    MenuContentView(store: HealthStore(), onSettings: {}, onBreathe: {})
+    MenuContentView(store: HealthStore(), onSettings: {})
 }
