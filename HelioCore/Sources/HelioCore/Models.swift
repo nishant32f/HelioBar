@@ -4,11 +4,13 @@ import Foundation
 public enum HRZone: String, Sendable {
     case resting, elevated, high
 
-    public static func zone(for bpm: Int) -> HRZone {
-        switch bpm {
-        case ..<90:    return .resting
-        case 90..<130: return .elevated
-        default:       return .high
+    /// Zone by fraction of max HR: <60% resting, 60–80% elevated, ≥80% high.
+    public static func zone(for bpm: Int, maxHR: Int) -> HRZone {
+        let pct = Double(bpm) / Double(Swift.max(maxHR, 1))
+        switch pct {
+        case ..<0.60:      return .resting
+        case 0.60..<0.80:  return .elevated
+        default:           return .high
         }
     }
 }

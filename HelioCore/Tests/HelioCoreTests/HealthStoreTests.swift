@@ -27,11 +27,20 @@ final class HealthStoreTests: XCTestCase {
         XCTAssertEqual(s.hrStatus, .error("Bluetooth is off"))
     }
 
-    func test_zoneThresholds() {
-        let s = HealthStore()
-        s.updateHR(80);  XCTAssertEqual(s.hrZone, .resting)
-        s.updateHR(100); XCTAssertEqual(s.hrZone, .elevated)
-        s.updateHR(150); XCTAssertEqual(s.hrZone, .high)
+    func test_zoneThresholdsByPercentMax() {
+        let s = HealthStore()   // default maxHR 190
+        s.updateHR(80);  XCTAssertEqual(s.hrZone, .resting)   // 42%
+        s.updateHR(120); XCTAssertEqual(s.hrZone, .elevated)  // 63%
+        s.updateHR(160); XCTAssertEqual(s.hrZone, .high)      // 84%
+    }
+    func test_percentMax() {
+        let s = HealthStore(); s.maxHR = 200; s.updateHR(100)
+        XCTAssertEqual(s.percentMax, 50)
+    }
+    func test_customMaxHRChangesZone() {
+        let s = HealthStore(); s.maxHR = 150   // lower max -> same bpm is a higher zone
+        s.updateHR(100)                         // 67%
+        XCTAssertEqual(s.hrZone, .elevated)
     }
 
     func test_sessionStatsTrackMinAvgMax() {
@@ -50,8 +59,8 @@ final class HealthStoreTests: XCTestCase {
         XCTAssertEqual(s.zoneFraction(.elevated), 0)
     }
     func test_zoneFraction() {
-        let s = HealthStore()
-        s.updateHR(70); s.updateHR(70); s.updateHR(100)   // 2 resting, 1 elevated
+        let s = HealthStore()                  // maxHR 190
+        s.updateHR(70); s.updateHR(70); s.updateHR(120)   // 2 resting (37%), 1 elevated (63%)
         XCTAssertEqual(s.zoneFraction(.resting), 2.0/3.0, accuracy: 0.001)
         XCTAssertEqual(s.zoneFraction(.elevated), 1.0/3.0, accuracy: 0.001)
     }

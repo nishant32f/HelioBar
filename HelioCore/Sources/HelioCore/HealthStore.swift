@@ -7,6 +7,7 @@ import Observation
 public final class HealthStore {
     public var liveHR: Int?
     public var hrStatus: SourceStatus = .idle
+    public var maxHR: Int = 190
 
     // Session analytics
     public private(set) var recent: [Int] = []          // for sparkline
@@ -28,7 +29,7 @@ public final class HealthStore {
         sessionMax = Swift.max(sessionMax ?? bpm, bpm)
         sessionSum += bpm
         sessionCount += 1
-        zoneCounts[HRZone.zone(for: bpm), default: 0] += 1
+        zoneCounts[HRZone.zone(for: bpm, maxHR: maxHR), default: 0] += 1
     }
 
     public func hrDisconnected() { hrStatus = .stale }
@@ -39,7 +40,12 @@ public final class HealthStore {
         sessionSum = 0; sessionCount = 0; zoneCounts = [:]
     }
 
-    public var hrZone: HRZone? { liveHR.map(HRZone.zone(for:)) }
+    public var hrZone: HRZone? { liveHR.map { HRZone.zone(for: $0, maxHR: maxHR) } }
+
+    /// Current HR as a percentage of max HR.
+    public var percentMax: Int? {
+        liveHR.map { Int((Double($0) / Double(Swift.max(maxHR, 1)) * 100).rounded()) }
+    }
 
     public var sessionAvg: Int? {
         sessionCount == 0 ? nil : Int((Double(sessionSum) / Double(sessionCount)).rounded())
