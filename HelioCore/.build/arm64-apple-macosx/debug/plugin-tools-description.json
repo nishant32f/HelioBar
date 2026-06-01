@@ -40,6 +40,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/ZeppCloudClient.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
         },
         {
@@ -53,7 +57,8 @@
       "objects" : [
         "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/HealthStore.swift.o",
         "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/HeartRatePacket.swift.o",
-        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/Models.swift.o"
+        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/Models.swift.o",
+        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/ZeppCloudClient.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -120,6 +125,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/ZeppCloudClient.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/Modules/HelioCore.swiftmodule"
         }
       ],
@@ -127,7 +136,8 @@
       "sources" : [
         "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/HealthStore.swift",
         "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/HeartRatePacket.swift",
-        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Models.swift"
+        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Models.swift",
+        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/ZeppCloudClient.swift"
       ],
       "tempsPath" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build",
       "wholeModuleOptimization" : false
@@ -242,6 +252,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/ZeppCloudClientTests.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
         },
         {
@@ -258,7 +272,8 @@
       "moduleOutputPath" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/Modules/HelioCoreTests.swiftmodule",
       "objects" : [
         "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/HealthStoreTests.swift.o",
-        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/HeartRatePacketTests.swift.o"
+        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/HeartRatePacketTests.swift.o",
+        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/ZeppCloudClientTests.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -320,13 +335,18 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/ZeppCloudClientTests.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/Modules/HelioCoreTests.swiftmodule"
         }
       ],
       "prepareForIndexing" : false,
       "sources" : [
         "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/HealthStoreTests.swift",
-        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/HeartRatePacketTests.swift"
+        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/HeartRatePacketTests.swift",
+        "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/ZeppCloudClientTests.swift"
       ],
       "tempsPath" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build",
       "wholeModuleOptimization" : false
@@ -346,6 +366,7 @@
       "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/HealthStore.swift",
       "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/HeartRatePacket.swift",
       "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Models.swift",
+      "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/ZeppCloudClient.swift",
       "-I",
       "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/Modules",
       "-target",
@@ -467,6 +488,7 @@
       "-c",
       "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/HealthStoreTests.swift",
       "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/HeartRatePacketTests.swift",
+      "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/ZeppCloudClientTests.swift",
       "-I",
       "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/Modules",
       "-target",
@@ -571,6 +593,10 @@
         {
           "kind" : "file",
           "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/Models.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Sources/HelioCore/ZeppCloudClient.swift"
         }
       ],
       "outputFilePath" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/sources"
@@ -610,6 +636,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCore.build/ZeppCloudClient.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCorePackageTests.build/runner.swift.o"
         },
         {
@@ -619,6 +649,10 @@
         {
           "kind" : "file",
           "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/HeartRatePacketTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/ZeppCloudClientTests.swift.o"
         }
       ],
       "outputFilePath" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCorePackageTests.product/Objects.LinkFileList"
@@ -637,6 +671,10 @@
         {
           "kind" : "file",
           "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/HeartRatePacketTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/Tests/HelioCoreTests/ZeppCloudClientTests.swift"
         }
       ],
       "outputFilePath" : "/Users/tirth/Desktop/Projects/HelioBar/HelioCore/.build/arm64-apple-macosx/debug/HelioCoreTests.build/sources"
