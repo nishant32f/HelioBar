@@ -1,0 +1,71 @@
+# HelioBar
+
+A native macOS **menu bar app** that shows your **live heart rate** from an
+[Amazfit Helio Strap](https://us.amazfit.com/products/helio-strap) — read directly
+over Bluetooth, no cloud, no account, nothing leaves your Mac.
+
+The strap broadcasts heart rate over the standard BLE Heart Rate service, and
+HelioBar reads it straight from CoreBluetooth.
+
+## Features
+
+- **Live HR in the menu bar** — the number, zone-tinted (green / orange / red) with a trend arrow (`♥ 84 ↑`)
+- **Dropdown** with a live HR **sparkline**, session **min / avg / max**, a **time-in-zone** bar, and **% of max HR**
+- **Personalized zones** — set your age; zones scale to your estimated max HR (≈ 220 − age)
+- **Elevated-HR alerts** — a macOS notification when your HR stays above a threshold for N minutes (a desk-stress nudge)
+- **Breathing biofeedback** — a guided inhale/exhale timer, inline in the dropdown, so you can watch your HR settle in real time
+- **Launch at login**, no Dock icon, App Sandbox on
+
+## Requirements
+
+- macOS 14+ (built with Xcode 26 / Swift 6)
+- An Amazfit Helio Strap (or any device that broadcasts the standard BLE Heart Rate service `0x180D`)
+
+## Setup
+
+1. In the **Zepp** app: Device → Helio Strap → Health Monitoring → enable **Heart Rate Push**.
+   This makes the strap broadcast HR over standard BLE.
+2. Launch HelioBar and **allow Bluetooth** when prompted.
+3. The menu bar number goes live within a few seconds.
+
+> **Notch tip:** on a crowded notch-MacBook menu bar, the icon can land *under* the
+> notch. Hold **⌘** and drag it out to the right — macOS remembers the spot.
+
+## Build & install
+
+```bash
+brew install xcodegen          # one-time
+git clone https://github.com/TirthCodes/HelioBar.git
+cd HelioBar
+xcodegen generate
+xcodebuild -scheme HelioBar -configuration Release -derivedDataPath build build
+cp -R build/Build/Products/Release/HelioBar.app /Applications/
+open /Applications/HelioBar.app
+```
+
+Run the logic tests with `cd HelioCore && swift test`.
+
+## Architecture
+
+- **`HelioCore/`** — a Swift package with the pure, unit-tested logic: `HealthStore`
+  (the single source of truth), the BLE Heart Rate packet parser, HR-zone math, and the
+  elevated-HR alert engine. Run via `swift test`.
+- **`HelioBarApp/`** — the macOS app target (generated with XcodeGen): an AppKit
+  `NSStatusItem` + `NSPopover` driving SwiftUI views, and a CoreBluetooth `HeartRateMonitor`.
+  The menu bar uses AppKit (not SwiftUI's `MenuBarExtra`) because `NSStatusItem` survives
+  sleep/wake reliably.
+
+The UI only ever reads `HealthStore`; the BLE monitor pushes into it. Each piece has one job
+and is testable in isolation.
+
+## Notes
+
+- HRV isn't supported: the strap's BLE broadcast sends only the averaged BPM, not the
+  beat-to-beat (RR) intervals HRV requires.
+- Stress / energy / readiness need the Zepp cloud, which this app intentionally avoids.
+  Earlier commits explored a (working) cloud integration; it was removed to keep HelioBar
+  fully local. It's in the git history if you want it.
+
+## License
+
+MIT
