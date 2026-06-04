@@ -37,9 +37,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         popover.behavior = .transient
         popover.animates = false
-        popover.contentViewController = NSHostingController(
+        let menuController = NSHostingController(
             rootView: MenuContentView(store: model.store,
                                       onSettings: { [weak self] in self?.openSettings() }))
+        menuController.view.wantsLayer = true
+        menuController.view.layer?.backgroundColor = NSColor.clear.cgColor
+        popover.contentViewController = menuController
 
         titleTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.updateTitle() }
@@ -80,7 +83,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             popover.performClose(sender)
         } else {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            popover.contentViewController?.view.window?.makeKey()
+            if let window = popover.contentViewController?.view.window {
+                window.isOpaque = false
+                window.backgroundColor = .clear
+                window.makeKey()
+            }
             NSApp.activate(ignoringOtherApps: true)
         }
     }
@@ -92,27 +99,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         if settingsWindow == nil {
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 330, height: 380),
+                contentRect: NSRect(x: 0, y: 0, width: 318, height: 382),
                 styleMask: [.titled, .closable],
                 backing: .buffered,
                 defer: false)
             window.title = "HelioBar Settings"
-            window.contentViewController = NSHostingController(rootView: SettingsView())
+            window.contentViewController = NSHostingController(
+                rootView: SettingsView(onRetryBluetooth: { [weak self] in
+                    self?.model.retryBluetooth()
+                }))
+            window.isOpaque = true
+            window.backgroundColor = .windowBackgroundColor
+            window.titlebarAppearsTransparent = false
             window.isReleasedWhenClosed = false
-            window.delegate = self
             window.center()
             settingsWindow = window
         }
 
-        NSApp.setActivationPolicy(.regular)   // allow a normal, focusable window
         NSApp.activate(ignoringOtherApps: true)
         settingsWindow?.makeKeyAndOrderFront(nil)
-    }
-}
-
-extension AppDelegate: NSWindowDelegate {
-    func windowWillClose(_ notification: Notification) {
-        // Back to menu-bar-only once Settings closes: no lingering Dock icon.
-        NSApp.setActivationPolicy(.accessory)
     }
 }

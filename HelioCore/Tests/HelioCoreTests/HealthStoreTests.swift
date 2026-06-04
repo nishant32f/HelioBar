@@ -50,13 +50,33 @@ final class HealthStoreTests: XCTestCase {
         XCTAssertEqual(s.sessionMax, 100)
         XCTAssertEqual(s.sessionAvg, 80)
         XCTAssertEqual(s.recent, [60, 80, 100])
+        XCTAssertEqual(s.recentMin, 60)
+        XCTAssertEqual(s.recentMax, 100)
+        XCTAssertEqual(s.recentAvg, 80)
     }
     func test_resetSessionClearsStats() {
         let s = HealthStore()
         s.updateHR(90); s.resetSession()
         XCTAssertNil(s.sessionMin); XCTAssertNil(s.sessionAvg)
         XCTAssertTrue(s.recent.isEmpty)
+        XCTAssertTrue(s.recentPoints.isEmpty)
         XCTAssertEqual(s.zoneFraction(.elevated), 0)
+    }
+    func test_recentDurationTracksSampleTimeWindow() {
+        let s = HealthStore()
+        let start = Date(timeIntervalSince1970: 100)
+        s.updateHR(70, at: start)
+        s.updateHR(75, at: start.addingTimeInterval(42))
+        XCTAssertEqual(s.recentDuration, 42, accuracy: 0.001)
+    }
+    func test_recentHistoryKeepsFiveMinuteWindow() {
+        let s = HealthStore()
+        let start = Date(timeIntervalSince1970: 100)
+        s.updateHR(70, at: start)
+        s.updateHR(75, at: start.addingTimeInterval(299))
+        s.updateHR(80, at: start.addingTimeInterval(301))
+        XCTAssertEqual(s.recent, [75, 80])
+        XCTAssertEqual(s.recentDuration, 2, accuracy: 0.001)
     }
     func test_zoneFraction() {
         let s = HealthStore()                  // maxHR 190

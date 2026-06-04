@@ -10,11 +10,25 @@ final class AppModel {
     private var monitor: HeartRateMonitor?
     private let alertEngine = ElevatedHRAlertEngine()
     private var started = false
+    private var requestedNotificationPermission = false
 
     func start() {
         guard !started else { return }
         started = true
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+        if !requestedNotificationPermission {
+            requestedNotificationPermission = true
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+        }
+        startBluetoothMonitor()
+    }
+
+    func retryBluetooth() {
+        monitor = nil
+        store.hrStatus = .idle
+        startBluetoothMonitor()
+    }
+
+    private func startBluetoothMonitor() {
         monitor = HeartRateMonitor(
             onSample: { [weak self] sample in
                 Task { @MainActor in self?.handle(bpm: sample.bpm) }

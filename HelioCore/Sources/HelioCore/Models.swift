@@ -22,3 +22,13 @@ public enum SourceStatus: Equatable, Sendable {
     case stale              // had data, now dropped
     case error(String)      // failure with message
 }
+
+public struct HeartRatePoint: Equatable, Sendable {
+    public let bpm: Int
+    public let timestamp: Date
+
+    public init(bpm: Int, timestamp: Date) {
+        self.bpm = bpm
+        self.timestamp = timestamp
+    }
+}
