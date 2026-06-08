@@ -5,6 +5,7 @@ struct MenuContentView: View {
     let store: HealthStore
     var onSettings: () -> Void
     @State private var breathing = false
+    @State private var showingCapabilitiesInfo = false
 
     var body: some View {
         LiquidGlassContainer {
@@ -158,6 +159,20 @@ struct MenuContentView: View {
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
                 }
+                Button {
+                    showingCapabilitiesInfo.toggle()
+                } label: {
+                    Image(systemName: "info.circle")
+                        .font(.system(size: 11, weight: .semibold))
+                        .frame(width: 20, height: 20)
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                .help("Device capabilities")
+                .accessibilityLabel("Device capabilities")
+                .popover(isPresented: $showingCapabilitiesInfo, arrowEdge: .trailing) {
+                    capabilitiesInfoPopover
+                }
             }
 
             HStack(spacing: 6) {
@@ -166,18 +181,107 @@ struct MenuContentView: View {
                 metricPill(.battery, active: store.batteryLevel != nil || hasMetric(.battery))
                 metricPill(.deviceInfo, active: hasMetric(.deviceInfo))
             }
-
-            if !store.discoveredCapabilities.isEmpty {
-                Text(serviceSummary)
-                    .font(.system(size: 9, design: .rounded))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 7)
         .liquidGlassInset(cornerRadius: 10)
+    }
+
+    private var capabilitiesInfoPopover: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "antenna.radiowaves.left.and.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(store.deviceName ?? "Helio Strap")
+                        .font(.system(.callout, design: .rounded, weight: .semibold))
+                    Text(capabilitySummaryLine)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+
+            VStack(alignment: .leading, spacing: 7) {
+                capabilityRow(.heartRate, active: hasMetric(.heartRate), detail: "Standard Heart Rate service")
+                capabilityRow(
+                    .rrIntervals,
+                    active: store.rrIntervalsAvailable,
+                    detail: store.rrIntervalsAvailable ? "Seen in live HR packets" : "Not seen in live packets"
+                )
+                capabilityRow(
+                    .battery,
+                    active: store.batteryLevel != nil || hasMetric(.battery),
+                    detail: store.batteryLevel.map { "\($0)% battery" } ?? "Battery service not seen"
+                )
+                capabilityRow(.deviceInfo, active: hasMetric(.deviceInfo), detail: "Device Information service")
+            }
+
+            Divider().opacity(0.35)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("BLE services")
+                    .font(.caption2)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+                if store.discoveredCapabilities.isEmpty {
+                    Text("No services discovered yet. Open Heart Rate Push in Zepp and keep the strap nearby.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                } else {
+                    ForEach(store.discoveredCapabilities.prefix(6)) { capability in
+                        serviceRow(capability)
+                    }
+                    if store.discoveredCapabilities.count > 6 {
+                        Text("+\(store.discoveredCapabilities.count - 6) more")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .frame(width: 260)
+    }
+
+    private func capabilityRow(_ metric: SupportedMetric, active: Bool, detail: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: metric.symbolName)
+                .font(.system(size: 11, weight: .semibold))
+                .frame(width: 18)
+                .foregroundStyle(active ? metricColor(metric) : .secondary.opacity(0.45))
+            VStack(alignment: .leading, spacing: 1) {
+                Text(metric.rawValue)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                Text(detail)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Circle()
+                .fill(active ? Color.green : Color.secondary.opacity(0.3))
+                .frame(width: 6, height: 6)
+        }
+    }
+
+    private func serviceRow(_ capability: DeviceCapability) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(capability.characteristicUUIDs.isEmpty ? "—" : "\(capability.characteristicUUIDs.count)c")
+                .font(.system(size: 9, weight: .semibold, design: .rounded))
+                .foregroundStyle(.secondary)
+                .frame(width: 24, alignment: .leading)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(capability.serviceName)
+                    .font(.caption2)
+                    .fontWeight(.semibold)
+                Text(capability.serviceUUID)
+                    .font(.system(size: 9, design: .monospaced))
+                    .foregroundStyle(.secondary)
+            }
+        }
     }
 
     private func metricPill(_ metric: SupportedMetric, active: Bool) -> some View {
@@ -194,17 +298,10 @@ struct MenuContentView: View {
         store.discoveredCapabilities.contains { $0.supportedMetrics.contains(metric) }
     }
 
-    private var serviceSummary: String {
-        let named = store.discoveredCapabilities
-            .prefix(4)
-            .map { capability in
-                if capability.characteristicUUIDs.isEmpty {
-                    return capability.serviceName
-                }
-                return "\(capability.serviceName) \(capability.characteristicUUIDs.count)c"
-            }
-        let suffix = store.discoveredCapabilities.count > 4 ? " +" : ""
-        return "Services: \(named.joined(separator: " · "))\(suffix)"
+    private var capabilitySummaryLine: String {
+        let serviceCount = store.discoveredCapabilities.count
+        if serviceCount == 0 { return "Waiting for BLE service discovery" }
+        return "\(serviceCount) services discovered"
     }
 
     private func metricColor(_ metric: SupportedMetric) -> Color {
