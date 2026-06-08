@@ -8,21 +8,27 @@ binary_path="$build_dir/release/HelioBar"
 app_path="$HOME/Applications/HelioBar.app"
 contents_path="$app_path/Contents"
 macos_path="$contents_path/MacOS"
+resources_path="$contents_path/Resources"
 plist_path="$contents_path/Info.plist"
 source_plist="$repo_root/HelioBarApp/Resources/Info.plist"
+source_icon="$repo_root/HelioBarApp/Resources/HelioBar.icns"
+source_entitlements="$repo_root/HelioBarApp/Resources/HelioBar.entitlements"
 
 echo "Building HelioBar with SwiftPM..."
 swift build --package-path "$repo_root" -c release
 
 echo "Installing app bundle to $app_path..."
-mkdir -p "$macos_path"
+mkdir -p "$macos_path" "$resources_path"
 cp "$binary_path" "$macos_path/HelioBar"
 cp "$source_plist" "$plist_path"
+if [[ -f "$source_icon" ]]; then
+  cp "$source_icon" "$resources_path/HelioBar.icns"
+fi
 plutil -replace CFBundleExecutable -string HelioBar "$plist_path"
 plutil -replace CFBundlePackageType -string APPL "$plist_path"
 
 echo "Codesigning app bundle..."
-codesign --force --deep --sign - "$app_path"
+codesign --force --deep --sign - --entitlements "$source_entitlements" "$app_path"
 
 if pgrep -f 'HelioBar.app/Contents/MacOS/HelioBar' >/dev/null 2>&1; then
   echo "Stopping running HelioBar instance..."
