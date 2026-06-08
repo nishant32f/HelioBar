@@ -31,20 +31,32 @@ final class AppModel {
     private func startBluetoothMonitor() {
         monitor = HeartRateMonitor(
             onSample: { [weak self] sample in
-                Task { @MainActor in self?.handle(bpm: sample.bpm) }
+                Task { @MainActor in self?.handle(sample: sample) }
             },
             onConnected: { [weak self] connected in
                 Task { @MainActor in if !connected { self?.store.hrDisconnected() } }
             },
             onUnavailable: { [weak self] message in
                 Task { @MainActor in self?.store.hrFailed(message) }
+            },
+            onDeviceName: { [weak self] name in
+                Task { @MainActor in self?.store.updateDevice(name: name) }
+            },
+            onCapabilities: { [weak self] capabilities in
+                Task { @MainActor in self?.store.updateCapabilities(capabilities) }
+            },
+            onBatteryLevel: { [weak self] level in
+                Task { @MainActor in self?.store.updateBatteryLevel(level) }
             })
     }
 
-    private func handle(bpm: Int) {
+    private func handle(sample: HeartRateSample) {
         applyPrefs()
-        store.updateHR(bpm)
-        if alertEngine.evaluate(bpm: bpm, now: Date()) { fireAlert(bpm) }
+        store.updateHR(sample.bpm)
+        if !sample.rrIntervals.isEmpty {
+            store.markRRIntervalsAvailable()
+        }
+        if alertEngine.evaluate(bpm: sample.bpm, now: Date()) { fireAlert(sample.bpm) }
     }
 
     private func applyPrefs() {

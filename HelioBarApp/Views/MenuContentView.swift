@@ -20,11 +20,12 @@ struct MenuContentView: View {
                         .liquidGlassInset(cornerRadius: 12)
                     statsRow
                     zoneBar
+                    capabilitiesPanel
                     footer
                 }
             }
             .padding(12)
-            .frame(width: 276)
+            .frame(width: 292)
         }
     }
 
@@ -137,6 +138,89 @@ struct MenuContentView: View {
             iconButton("Quit", systemImage: "power", role: .destructive) {
                 NSApplication.shared.terminate(nil)
             }
+        }
+    }
+
+    private var capabilitiesPanel: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                Image(systemName: "antenna.radiowaves.left.and.right")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                Text(store.deviceName ?? "Helio Strap")
+                    .font(.caption2)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                Spacer()
+                if let battery = store.batteryLevel {
+                    Label("\(battery)%", systemImage: batteryIcon(for: battery))
+                        .font(.caption2)
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            HStack(spacing: 6) {
+                metricPill(.heartRate, active: hasMetric(.heartRate))
+                metricPill(.rrIntervals, active: store.rrIntervalsAvailable)
+                metricPill(.battery, active: store.batteryLevel != nil || hasMetric(.battery))
+                metricPill(.deviceInfo, active: hasMetric(.deviceInfo))
+            }
+
+            if !store.discoveredCapabilities.isEmpty {
+                Text(serviceSummary)
+                    .font(.system(size: 9, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 7)
+        .liquidGlassInset(cornerRadius: 10)
+    }
+
+    private func metricPill(_ metric: SupportedMetric, active: Bool) -> some View {
+        Label(metric.rawValue, systemImage: metric.symbolName)
+            .font(.system(size: 9, weight: .semibold, design: .rounded))
+            .labelStyle(.iconOnly)
+            .frame(width: 22, height: 18)
+            .foregroundStyle(active ? metricColor(metric) : .secondary.opacity(0.45))
+            .background(active ? metricColor(metric).opacity(0.16) : Color.secondary.opacity(0.08), in: Capsule())
+            .help("\(metric.rawValue): \(active ? "available" : "not seen")")
+    }
+
+    private func hasMetric(_ metric: SupportedMetric) -> Bool {
+        store.discoveredCapabilities.contains { $0.supportedMetrics.contains(metric) }
+    }
+
+    private var serviceSummary: String {
+        let named = store.discoveredCapabilities
+            .prefix(4)
+            .map { capability in
+                if capability.characteristicUUIDs.isEmpty {
+                    return capability.serviceName
+                }
+                return "\(capability.serviceName) \(capability.characteristicUUIDs.count)c"
+            }
+        let suffix = store.discoveredCapabilities.count > 4 ? " +" : ""
+        return "Services: \(named.joined(separator: " · "))\(suffix)"
+    }
+
+    private func metricColor(_ metric: SupportedMetric) -> Color {
+        switch metric {
+        case .heartRate: return .red
+        case .rrIntervals: return .pink
+        case .battery: return .green
+        case .deviceInfo: return .blue
+        }
+    }
+
+    private func batteryIcon(for level: Int) -> String {
+        switch level {
+        case 0...20: return "battery.25percent"
+        case 21...60: return "battery.50percent"
+        default: return "battery.100percent"
         }
     }
 

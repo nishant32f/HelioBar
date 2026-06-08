@@ -32,3 +32,40 @@ public struct HeartRatePoint: Equatable, Sendable {
         self.timestamp = timestamp
     }
 }
+
+public struct DeviceCapability: Equatable, Identifiable, Sendable {
+    public let id: String
+    public let serviceUUID: String
+    public let serviceName: String
+    public let characteristicUUIDs: [String]
+    public let supportedMetrics: [SupportedMetric]
+
+    public init(
+        serviceUUID: String,
+        serviceName: String,
+        characteristicUUIDs: [String],
+        supportedMetrics: [SupportedMetric]
+    ) {
+        self.id = serviceUUID
+        self.serviceUUID = serviceUUID
+        self.serviceName = serviceName
+        self.characteristicUUIDs = characteristicUUIDs
+        self.supportedMetrics = supportedMetrics
+    }
+}
+
+public enum SupportedMetric: String, CaseIterable, Sendable {
+    case heartRate = "Heart rate"
+    case rrIntervals = "RR intervals"
+    case battery = "Battery"
+    case deviceInfo = "Device info"
+
+    public var symbolName: String {
+        switch self {
+        case .heartRate: return "heart.fill"
+        case .rrIntervals: return "waveform.path.ecg"
+        case .battery: return "battery.100percent"
+        case .deviceInfo: return "info.circle"
+        }
+    }
+}

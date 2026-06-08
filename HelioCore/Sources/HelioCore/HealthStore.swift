@@ -10,6 +10,10 @@ public final class HealthStore {
     public var liveHR: Int?
     public var hrStatus: SourceStatus = .idle
     public var maxHR: Int = 190
+    public var deviceName: String?
+    public var discoveredCapabilities: [DeviceCapability] = []
+    public var batteryLevel: Int?
+    public var rrIntervalsAvailable = false
 
     // Session analytics
     public private(set) var recent: [Int] = []          // recent values for trend and tests
@@ -38,6 +42,13 @@ public final class HealthStore {
 
     public func hrDisconnected() { hrStatus = .stale }
     public func hrFailed(_ message: String) { hrStatus = .error(message) }
+    public func updateDevice(name: String?) { deviceName = name }
+    public func updateBatteryLevel(_ level: Int) { batteryLevel = Swift.max(0, Swift.min(100, level)) }
+    public func markRRIntervalsAvailable() { rrIntervalsAvailable = true }
+
+    public func updateCapabilities(_ capabilities: [DeviceCapability]) {
+        discoveredCapabilities = capabilities.sorted { $0.serviceName < $1.serviceName }
+    }
 
     public func resetSession() {
         recent = []; recentPoints = []; sessionMin = nil; sessionMax = nil
